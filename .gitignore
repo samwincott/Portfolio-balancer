@@ -114,3 +114,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Visual studio code workspace
+*.code-workspace
+
+# Personal info
+apiKeys.json
+portfolio.json
