@@ -3,11 +3,10 @@ import datetime
 
 class Share(object):
 
-    def __init__(self, ticker, owned, percentage_of_portfolio, isin, morningstar_id):
+    def __init__(self, ticker, owned, percentage_of_portfolio, morningstar_id):
         self.ticker = ticker
         self.owned = owned
         self.aim_percentage_of_portfolio = percentage_of_portfolio
-        self.isin = isin
         self.morningstar_id = morningstar_id
         self.price_date = datetime.datetime(2018, 1, 1)
         self.price = self.get_price()
@@ -34,11 +33,20 @@ class Share(object):
             self.price_date = datetime.datetime.utcnow()
         return self.price
     
-    def get_isin(self):
-        return self.isin
+    def get_price_date(self):
+        return self.price_date
+
+    def get_morningstar_id(self):
+        return self.morningstar_id
     
     def get_aim_percentage(self):
         return self.aim_percentage_of_portfolio
     
     def set_aim_percentage(self, aim):
         self.aim_percentage_of_portfolio = aim
+    
+    def pretty_print(self):
+        print("Share name: %s" % (self.get_ticker()))
+        print("Number owned: %d " % (self.get_number_owned()))
+        print("Current price: £%.2f " % (self.get_price()))
+        print("Aim percentage: %d%%" % (self.get_aim_percentage()))
