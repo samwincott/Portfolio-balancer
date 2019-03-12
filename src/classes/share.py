@@ -11,10 +11,11 @@ class Share(object):
     def __init__(self, ticker, owned, percentage_of_portfolio, morningstar_id):
         self.ticker = ticker
         self.number_owned = owned
-        self.aim_percentage_of_portfolio = percentage_of_portfolio
+        self.aim_percentage = percentage_of_portfolio
         self.morningstar_id = morningstar_id
-        self._price = None
+        self._price = 0
         self.price_date = datetime.datetime(2018, 1, 1)
+        self._value_of_holding = 0
 
     def buy(self, amount):
         """Buy more of this specific share."""
@@ -25,7 +26,8 @@ class Share(object):
         """Sell this specific share."""
         self.number_owned -= amount
 
-    def get_value_of_holding(self):
+    @property
+    def value_of_holding(self):
         """Return the current value of this holding."""
         return self.price * self.number_owned
 
@@ -47,6 +49,6 @@ class Share(object):
         string += f'Share name: {self.ticker}\n'
         string += f'Number owned: {self.number_owned}\n'
         string += f'Current price: £{self.price}\n'
-        string += f'Aim percentage: {self.aim_percentage_of_portfolio}%'
+        string += f'Aim percentage: {self.aim_percentage}%'
 
         return string

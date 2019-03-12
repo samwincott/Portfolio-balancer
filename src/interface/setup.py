@@ -26,9 +26,11 @@ class main_interface():
         filename = askopenfilename()
         self.portfolio.load_from_file(filename)
         # self.portfolio.pretty_print()
-        self.msg = tk.Message(self.master, text=self.portfolio.get_data())
+        self.msg = tk.Message(self.master, text=str(self.portfolio))
         self.msg.grid(column=0, row=3)
 
     def invest(self):
         amount = float(self.invest_amount.get())
         self.portfolio.allocate_funds(amount)
+        self.msg = tk.Message(self.master, text=str(self.portfolio))
+        self.msg.grid(column=0, row=3)

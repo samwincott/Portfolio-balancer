@@ -36,15 +36,15 @@ class Portfolio(object):
 
     # Printing
 
-    def get_data(self):
+    def __str__(self):
         """Outputs the portfolio information to the console."""
         return_string = ""
         for share in self.shares:
             return_string += '---\n'
-            return_string += f'Stock: {share.get_ticker()}\n'
-            return_string += f'Owned: {share.get_number_owned()}\n'
-            return_string += f'Price: £{round(share.get_price(), 2)}\n'
-            return_string += f'Aim of portfolio: {round(share.get_aim_percentage(), 2)}%\n'
+            return_string += f'Stock: {share.ticker}\n'
+            return_string += f'Owned: {share.number_owned}\n'
+            return_string += f'Price: £{round(share.price, 2)}\n'
+            return_string += f'Aim of portfolio: {round(share.aim_percentage, 2)}%\n'
             return_string += f'Actual of portfolio: {round(self.actual_percentages[share], 2)}%\n'
             return_string += f'Ratio diff: {round(self.percentage_diffs[share], 2)}%\n'
         return_string += '----\n'
@@ -60,18 +60,18 @@ class Portfolio(object):
         portfolio_data = {}
         for share in self.shares:
             share_info = {}
-            share_info["Owned"] = share.get_number_owned()
-            share_info["Percentage"] = share.get_aim_percentage()
-            share_info["MorningstarID"] = share.get_morningstar_id()
-            share_info["Price"] = (share.get_price(), share.get_price_date().__str__())
-            portfolio_data[share.get_ticker()] = share_info
+            share_info["Owned"] = share.number_owned
+            share_info["Percentage"] = share.aim_percentage
+            share_info["MorningstarID"] = share.morningstar_id
+            share_info["Price"] = (share.price, share.price_date.__str__())
+            portfolio_data[share.ticker] = share_info
         return portfolio_data
 
     def display_share_info(self, input_ticker):
         """Outputs information for a particular share to the console."""
         for share in self.shares:
-            if share.get_ticker() == input_ticker:
-                share.pretty_print()
+            if share.ticker == input_ticker:
+                print(share)
                 print(f'Actual percentage: {round(self.actual_percentages[share], 2)}')
                 print(f'Percentage away from aim: {round(self.percentage_diffs[share], 2)}')
                 return
@@ -90,7 +90,7 @@ class Portfolio(object):
         """Tool to sell a certain amount of a given share."""
         share = next((share for share in self.shares if share.ticker == ticker), None)
         assert share is not None, "Can't sell what you don't have"
-        assert number_of_shares <= share.get_number_owned(), "Not enough shares to sell"
+        assert number_of_shares <= share.number_owned, "Not enough shares to sell"
         share.sell(number_of_shares)
         self.update_meta_info()
 
@@ -101,46 +101,47 @@ class Portfolio(object):
         self.update_meta_info()
         left_to_sell = amount_to_invest
         shares_to_buy = {}
-        while left_to_sell >= min(share.get_price() * 1.05 for share in self.shares):
+        while left_to_sell >= min(share.price * 1.05 for share in self.shares):
             share_to_buy = min(self.percentage_diffs, key=self.percentage_diffs.get)
-            self.buy_shares(share_to_buy.get_ticker(), 1)
-            left_to_sell -= share_to_buy.get_price() * 1.05
+            self.buy_shares(share_to_buy.ticker, 1)
+            left_to_sell -= share_to_buy.price * 1.05
             if share_to_buy not in shares_to_buy:
                 shares_to_buy[share_to_buy] = 1
             else:
                 shares_to_buy[share_to_buy] += 1
         for share in shares_to_buy:
-            print(f'Buy {shares_to_buy[share]} shares of {share.get_ticker()}')
+            print(f'Buy {shares_to_buy[share]} shares of {share.ticker}')
 
     # Updating info
 
     def update_meta_info(self):
         """Updates all the metadata for the portfolio."""
-        self.update_total_investment()
-        self.update_actual_percentages()
-        self.update_percentage_diffs()
 
-    def update_total_investment(self):
-        """Updates the total amount invested in the portfolio."""
-        total = 0
-        for share in self.shares:
-            total += share.get_value_of_holding()
-        self.total_invested = total
+        def update_total_investment(portfolio):
+            """Updates the total amount invested in the portfolio."""
+            total = 0
+            for share in portfolio.shares:
+                total += share.value_of_holding
+            portfolio.total_invested = total
 
-    def update_actual_percentages(self):
-        """Updates the actual percentages that specific shares are of the portfolio."""
-        actual_percentages = {}
-        for share in self.shares:
-            actual = (share.get_value_of_holding() * 100) / self.total_invested
-            actual_percentages[share] = actual
-        self.actual_percentages = actual_percentages
+        def update_actual_percentages(portfolio):
+            """Updates the actual percentages that specific shares are of the portfolio."""
+            actual_percentages = {}
+            for share in portfolio.shares:
+                actual = (share.value_of_holding * 100) / portfolio.total_invested
+                actual_percentages[share] = actual
+            portfolio.actual_percentages = actual_percentages
 
-    def update_percentage_diffs(self):
-        """Updates how close the percentage of a particular share
-        in the portfolio is to its aim percentage.
-        """
-        percentage_diffs = {}
-        for share in self.actual_percentages:
-            diff = ((self.actual_percentages[share] * 100) / share.get_aim_percentage()) - 100
-            percentage_diffs[share] = diff
-        self.percentage_diffs = percentage_diffs
+        def update_percentage_diffs(portfolio):
+            """Updates how close the percentage of a particular share
+            in the portfolio is to its aim percentage.
+            """
+            percentage_diffs = {}
+            for share in portfolio.actual_percentages:
+                diff = ((portfolio.actual_percentages[share] * 100) / share.aim_percentage) - 100
+                percentage_diffs[share] = diff
+            portfolio.percentage_diffs = percentage_diffs
+
+        update_total_investment(self)
+        update_actual_percentages(self)
+        update_percentage_diffs(self)
