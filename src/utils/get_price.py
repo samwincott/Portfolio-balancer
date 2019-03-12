@@ -1,9 +1,12 @@
+"""Functions relating to getting the price of a security."""
+
+import re
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
-import re
 
-def get_price(id):
-    quote_page = "http://www.morningstar.co.uk/uk/etf/snapshot/snapshot.aspx?id=" + id
+def get_price(morningstar_id):
+    """Returns the price from morningstar given its Morningstar ID."""
+    quote_page = "http://www.morningstar.co.uk/uk/etf/snapshot/snapshot.aspx?id=" + morningstar_id
     page = urlopen(quote_page)
     soup = BeautifulSoup(page, 'html.parser')
     price_box = soup.find('td', attrs={'class':'line text'})

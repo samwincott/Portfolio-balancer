@@ -1,10 +1,21 @@
+"""Main file for project."""
+
+from interface.main import run_interface
 from classes.portfolio import Portfolio
-from classes.share import Share
 
-share1 = Share('VHYL', 9, 25)
-share2 = Share('VFEM', 5, 15)
-my_shares = [share1, share2]
+def main():
+    my_portfolio = Portfolio()
+    run_interface(my_portfolio)
 
-my_portfolio = Portfolio(my_shares)
+if __name__ == '__main__':
+    main()
 
-my_portfolio.pretty_print()
+# help
+# load portfolio
+# save portfolio
+# display share info
+# add money
+# add money with balancer
+# sell shares
+# sell shares with balancer
+# display info
