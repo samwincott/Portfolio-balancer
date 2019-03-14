@@ -16,7 +16,7 @@ class Portfolio(object):
         self.total_invested = 0
         self.update_meta_info()
 
-    def load_from_file(self, filename):
+    def load(self, filename):
         """Loads in portfolio information from a json file."""
         with open(filename, "r") as portfolio:
             shares = json.load(portfolio)
@@ -28,10 +28,10 @@ class Portfolio(object):
                 self.shares.append(tmp)
         self.update_meta_info()
 
-    def save_to_file(self):
+    def save(self, filename):
         """Saves the state of a portfolio to a json file."""
         portfolio_data = self.get_json()
-        with open('./data/portfolio_save.json', 'w') as outfile:
+        with open(filename, 'w') as outfile:
             json.dump(portfolio_data, outfile)
 
     # Printing
@@ -40,7 +40,7 @@ class Portfolio(object):
         """Outputs the portfolio information to the console."""
         return_string = ""
         for share in self.shares:
-            return_string += '---\n'
+            return_string += '----\n'
             return_string += f'Stock: {share.ticker}\n'
             return_string += f'Owned: {share.number_owned}\n'
             return_string += f'Price: £{round(share.price, 2)}\n'
@@ -50,10 +50,6 @@ class Portfolio(object):
         return_string += '----\n'
         return_string += f'Total invested: £{round(self.total_invested, 2)}'
         return return_string
-    
-    def json_print(self):
-        """Prints all current data in json format."""
-        print(self.get_json())
 
     def get_json(self):
         """Returns all current data in json format."""
@@ -66,17 +62,6 @@ class Portfolio(object):
             share_info["Price"] = (share.price, share.price_date.__str__())
             portfolio_data[share.ticker] = share_info
         return portfolio_data
-
-    def display_share_info(self, input_ticker):
-        """Outputs information for a particular share to the console."""
-        for share in self.shares:
-            if share.ticker == input_ticker:
-                print(share)
-                print(f'Actual percentage: {round(self.actual_percentages[share], 2)}')
-                print(f'Percentage away from aim: {round(self.percentage_diffs[share], 2)}')
-                return
-        print("Share not owned")
-        return
 
     # Buying and selling shares
 
@@ -94,7 +79,7 @@ class Portfolio(object):
         share.sell(number_of_shares)
         self.update_meta_info()
 
-    def allocate_funds(self, amount_to_invest):
+    def invest(self, amount_to_invest):
         """Suggests what shares to buy to maintain the appropriate
         distribution of shares in the portfolio.
         """
