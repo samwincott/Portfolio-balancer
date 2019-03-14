@@ -31,6 +31,7 @@ class Portfolio(object):
     def save(self, filename):
         """Saves the state of a portfolio to a json file."""
         portfolio_data = self.get_json()
+        filename += ".json"
         with open(filename, 'w') as outfile:
             json.dump(portfolio_data, outfile)
 
@@ -102,31 +103,10 @@ class Portfolio(object):
     def update_meta_info(self):
         """Updates all the metadata for the portfolio."""
 
-        def update_total_investment(portfolio):
-            """Updates the total amount invested in the portfolio."""
-            total = 0
-            for share in portfolio.shares:
-                total += share.value_of_holding
-            portfolio.total_invested = total
+        self.total_invested = sum(share.value_of_holding for share in self.shares)
 
-        def update_actual_percentages(portfolio):
-            """Updates the actual percentages that specific shares are of the portfolio."""
-            actual_percentages = {}
-            for share in portfolio.shares:
-                actual = (share.value_of_holding * 100) / portfolio.total_invested
-                actual_percentages[share] = actual
-            portfolio.actual_percentages = actual_percentages
+        actual_percentages = lambda value, total: (value * 100) / total
+        self.actual_percentages = {share: actual_percentages(share.value_of_holding, self.total_invested) for share in self.shares}
 
-        def update_percentage_diffs(portfolio):
-            """Updates how close the percentage of a particular share
-            in the portfolio is to its aim percentage.
-            """
-            percentage_diffs = {}
-            for share in portfolio.actual_percentages:
-                diff = ((portfolio.actual_percentages[share] * 100) / share.aim_percentage) - 100
-                percentage_diffs[share] = diff
-            portfolio.percentage_diffs = percentage_diffs
-
-        update_total_investment(self)
-        update_actual_percentages(self)
-        update_percentage_diffs(self)
+        ratio_diffs = lambda actual, aim: ((actual * 100) / aim) - 100
+        self.percentage_diffs = {share: ratio_diffs(self.actual_percentages[share], share.aim_percentage) for share in self.shares}

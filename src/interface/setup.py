@@ -24,6 +24,7 @@ class main_interface():
         self.invest_label.grid(column=0, row=1)
         self.invest_amount.grid(column=1, row=1)
         self.invest_button.grid(column=2, row=1)
+        self.save_button.grid(column=2, row=2)
 
     def load_portfolio(self):
         filename = askopenfilename()
