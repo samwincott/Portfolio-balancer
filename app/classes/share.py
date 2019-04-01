@@ -1,46 +1,54 @@
 """This file contains the share class."""
 
 import datetime
-from utils.get_price import get_price
+from app.utils.get_price import get_price
 
 class Share(object):
     """This class represents a share,
     and its metadata with respect to a portfolio.
     """
 
-    def __init__(self, ticker, owned, percentage_of_portfolio, morningstar_id):
+    def __init__(self, ticker, data_object):
         self.ticker = ticker
-        self.number_owned = owned
-        self.aim_percentage = percentage_of_portfolio
-        self.morningstar_id = morningstar_id
-        self._price = 0
-        self.price_date = datetime.datetime(2018, 1, 1)
-        self._value_of_holding = 0
+        self.number_owned = data_object["Owned"]
+        self.aim_percentage = data_object["Percentage"]
+        self.morningstar_id = data_object["MorningstarID"]
+        try:
+            self._price = data_object["Price"][0]
+            self.price_date = float(data_object["Price"][1])
+            self._value_of_holding = data_object["Holding"]
+        except:
+            self._price = 0
+            self.price_date = datetime.datetime(2018, 1, 1).timestamp()
+            self._value_of_holding = 0
+
 
     def buy(self, amount):
         """Buy more of this specific share."""
-        assert amount is not None, "Can't sell what you don't have"
-        self.number_owned += amount
+        try:
+            self.number_owned += amount
+        except:
+            self.number_owned = amount
 
     def sell(self, amount):
         """Sell this specific share."""
+        if amount < self.number_owned:
+            return False
         self.number_owned -= amount
-
-    @property
-    def value_of_holding(self):
-        """Return the current value of this holding."""
-        return self.price * self.number_owned
 
     @property
     def price(self):
         """Returns the price of the share.
         Caches recent prices to reduce API calls.
         """
-        if self.price_date.timestamp() < datetime.datetime.utcnow().timestamp() - 86400:
-            print(f'Retrieving current price for {self.ticker}')
+        if self.price_date < datetime.datetime.utcnow().timestamp() - 86400:
             self._price = get_price(self.morningstar_id)
-            self.price_date = datetime.datetime.utcnow()
+            self.price_date = datetime.datetime.utcnow().timestamp()
         return self._price
+    
+    @property
+    def value_of_holding(self):
+        return self.price * self.number_owned
 
     def __str__(self):
         """Outputs the information for this holding."""

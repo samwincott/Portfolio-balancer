@@ -1,7 +1,7 @@
 """This file holds the portfolio class."""
 
 import json
-from classes.share import Share
+from app.classes.share import Share
 
 class Portfolio(object):
     """This class will model a portfolio of shares."""
@@ -18,14 +18,17 @@ class Portfolio(object):
 
     def load(self, filename):
         """Loads in portfolio information from a json file."""
+        # Remove previous share data
+        if self.shares:
+            self.shares = []
+        
+        # Load in new data
         with open(filename, "r") as portfolio:
             shares = json.load(portfolio)
             for share in shares:
-                tmp = Share(share,
-                            shares[share]['Owned'],
-                            shares[share]['Percentage'],
-                            shares[share]['MorningstarID'])
+                tmp = Share(share, shares[share])
                 self.shares.append(tmp)
+        
         self.update_meta_info()
 
     def save(self, filename):
@@ -61,6 +64,7 @@ class Portfolio(object):
             share_info["Percentage"] = share.aim_percentage
             share_info["MorningstarID"] = share.morningstar_id
             share_info["Price"] = (share.price, share.price_date.__str__())
+            share_info["Holding"] = share.value_of_holding
             portfolio_data[share.ticker] = share_info
         return portfolio_data
 
@@ -69,15 +73,18 @@ class Portfolio(object):
     def buy_shares(self, ticker, number_of_shares):
         """Tool to buy a certain amount of a given share."""
         share = next((share for share in self.shares if share.ticker == ticker), None)
+        assert share is not None, "This ticker is not part of the portfolio currently."
         share.buy(number_of_shares)
+
         self.update_meta_info()
 
     def sell_shares(self, ticker, number_of_shares):
         """Tool to sell a certain amount of a given share."""
         share = next((share for share in self.shares if share.ticker == ticker), None)
-        assert share is not None, "Can't sell what you don't have"
-        assert number_of_shares <= share.number_owned, "Not enough shares to sell"
+        assert share is not None, "You don't have any holdings for this ticker."
+
         share.sell(number_of_shares)
+
         self.update_meta_info()
 
     def invest(self, amount_to_invest):
@@ -85,28 +92,37 @@ class Portfolio(object):
         distribution of shares in the portfolio.
         """
         self.update_meta_info()
-        left_to_sell = amount_to_invest
         shares_to_buy = {}
-        while left_to_sell >= min(share.price * 1.05 for share in self.shares):
+        # The price may deviate slightly between running this program and the order being executed
+        price_deviation = 1.05
+
+        while amount_to_invest >= min(share.price * price_deviation for share in self.shares):
             share_to_buy = min(self.percentage_diffs, key=self.percentage_diffs.get)
             self.buy_shares(share_to_buy.ticker, 1)
-            left_to_sell -= share_to_buy.price * 1.05
-            if share_to_buy not in shares_to_buy:
-                shares_to_buy[share_to_buy] = 1
-            else:
+            amount_to_invest -= share_to_buy.price * price_deviation
+            try:
                 shares_to_buy[share_to_buy] += 1
-        for share in shares_to_buy:
-            print(f'Buy {shares_to_buy[share]} shares of {share.ticker}')
+            except:
+                shares_to_buy[share_to_buy] = 1
 
+        return_string = "Buy:\n"
+        for share in shares_to_buy:
+            return_string += f'{shares_to_buy[share]} shares of {share.ticker}\n'
+
+        return return_string
+            
     # Updating info
 
     def update_meta_info(self):
         """Updates all the metadata for the portfolio."""
 
+        # Update total value of portfolio
         self.total_invested = sum(share.value_of_holding for share in self.shares)
 
-        actual_percentages = lambda value, total: (value * 100) / total
+        # Update the actual percentages that invidual holdings are of the portfolio
+        actual_percentages = lambda value, total: round(((value * 100) / total), 2)
         self.actual_percentages = {share: actual_percentages(share.value_of_holding, self.total_invested) for share in self.shares}
 
-        ratio_diffs = lambda actual, aim: ((actual * 100) / aim) - 100
+        # Update the difference between actual and aim percentage of a holding in the portfolio
+        ratio_diffs = lambda actual, aim: round((((actual * 100) / aim) - 100), 2)
         self.percentage_diffs = {share: ratio_diffs(self.actual_percentages[share], share.aim_percentage) for share in self.shares}
