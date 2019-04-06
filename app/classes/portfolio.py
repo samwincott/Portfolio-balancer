@@ -107,7 +107,7 @@ class Portfolio(object):
 
         return_string = "Buy:\n"
         for share in shares_to_buy:
-            return_string += f'{shares_to_buy[share]} shares of {share.ticker}\n'
+            return_string += f'{shares_to_buy[share]} shares of {share.ticker} at {share.price*1.05*shares_to_buy[share]}\n'
 
         return return_string
             

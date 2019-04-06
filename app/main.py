@@ -1,7 +1,7 @@
 """Main file for project."""
 
-from interface.main import run_interface
-from classes.portfolio import Portfolio
+from app.interface.main import run_interface
+from app.classes.portfolio import Portfolio
 
 def main():
     my_portfolio = Portfolio()

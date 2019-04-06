@@ -1,4 +1,4 @@
-from interface.setup import main_interface
+from app.interface.setup import main_interface
 import tkinter as tk
 
 def run_interface(portfolio):
