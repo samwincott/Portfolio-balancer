@@ -126,3 +126,8 @@ class Portfolio(object):
         # Update the difference between actual and aim percentage of a holding in the portfolio
         ratio_diffs = lambda actual, aim: round((((actual * 100) / aim) - 100), 2)
         self.percentage_diffs = {share: ratio_diffs(self.actual_percentages[share], share.aim_percentage) for share in self.shares}
+    
+    def get_share(self, ticker):
+        share = next((share for share in self.shares if share.ticker == ticker), None)
+        return share
+
