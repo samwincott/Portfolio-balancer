@@ -118,5 +118,9 @@ dmypy.json
 # Visual studio code workspace
 *.code-workspace
 
-# Personal dat
-*.json
+###
+# Personal additions
+###
+data/portfolio.json
+data/save.json
+.vscode
