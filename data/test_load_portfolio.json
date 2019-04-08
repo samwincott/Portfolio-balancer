@@ -1,0 +1,22 @@
+{
+    "shares":[
+        {
+            "Ticker":"ABC",
+            "Owned":8,
+            "Percentage":30,
+            "MorningstarID":"0P0000YWPH"
+        },
+        {
+            "Ticker":"MNO",
+            "Owned":8,
+            "Percentage":30,
+            "MorningstarID":"0P0000WAHF"
+        },
+        {
+            "Ticker":"XYZ",
+            "Owned":12,
+            "Percentage":40,
+            "MorningstarID":"0P0000WAHG"
+        }
+    ]
+}
