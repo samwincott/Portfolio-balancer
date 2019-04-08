@@ -32,7 +32,7 @@ class Share(object):
 
     def sell(self, amount):
         """Sell this specific share."""
-        if amount < self.number_owned:
+        if amount > self.number_owned:
             return False
         self.number_owned -= amount
 
