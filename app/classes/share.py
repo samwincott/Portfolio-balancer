@@ -3,6 +3,7 @@
 import datetime
 from app.utils.get_price import get_price
 
+
 class Share(object):
     """This class represents a share,
     and its metadata with respect to a portfolio.
@@ -21,7 +22,6 @@ class Share(object):
             self._price = 0
             self.price_date = datetime.datetime(2018, 1, 1).timestamp()
             self._value_of_holding = 0
-
 
     def buy(self, amount):
         """Buy more of this specific share."""
@@ -45,7 +45,7 @@ class Share(object):
             self._price = get_price(self.morningstar_id)
             self.price_date = datetime.datetime.utcnow().timestamp()
         return self._price
-    
+
     @property
     def value_of_holding(self):
         return self.price * self.number_owned
