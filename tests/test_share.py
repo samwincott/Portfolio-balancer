@@ -8,8 +8,8 @@ class TestShare(unittest.TestCase):
     def setup(self, timestamp=datetime.utcnow().timestamp()):
         self.timestamp = timestamp
         price_data = [25.00, timestamp]
-        data_object = {"Owned": 1, "Percentage": 20, "MorningstarID": "0P0000YWPH", "Price": price_data, "Holding": 25.00}
-        self.test_share = Share("VHYL", data_object)
+        data_object = {"Ticker": "VHYL", "Owned": 1, "Percentage": 20, "MorningstarID": "0P0000YWPH", "Price": price_data, "Holding": 25.00}
+        self.test_share = Share(data_object)
 
     def test_init(self):
         self.setup()

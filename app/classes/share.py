@@ -8,8 +8,8 @@ class Share(object):
     and its metadata with respect to a portfolio.
     """
 
-    def __init__(self, ticker, data_object):
-        self.ticker = ticker
+    def __init__(self, data_object):
+        self.ticker = data_object["Ticker"]
         self.number_owned = data_object["Owned"]
         self.aim_percentage = data_object["Percentage"]
         self.morningstar_id = data_object["MorningstarID"]

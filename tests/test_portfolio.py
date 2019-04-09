@@ -12,13 +12,13 @@ class TestPortfolio(unittest.TestCase):
         share1_price_data = [25.00, timestamp]
         share2_price_data = [49.00, timestamp]
 
-        share1_data_object = {"Owned": 2, "Percentage": 50, "MorningstarID": "0P0000YWPH",
+        share1_data_object = {"Ticker": "ABC", "Owned": 2, "Percentage": 50, "MorningstarID": "0P0000YWPH",
                               "Price": share1_price_data, "Holding": 50.00}
-        share2_data_object = {"Owned": 1, "Percentage": 50, "MorningstarID": "0P0000YWPH",
+        share2_data_object = {"Ticker": "XYZ", "Owned": 1, "Percentage": 50, "MorningstarID": "0P0000YWPH",
                               "Price": share2_price_data, "Holding": 49.00}
 
-        self.test_share1 = Share("ABC", share1_data_object)
-        self.test_share2 = Share("XYZ", share2_data_object)
+        self.test_share1 = Share(share1_data_object)
+        self.test_share2 = Share(share2_data_object)
 
         self.test_portfolio = Portfolio([self.test_share1, self.test_share2])
 
@@ -129,6 +129,8 @@ class TestPortfolio(unittest.TestCase):
 
     def test_invest(self):
         self.setup()
+
+        print(self.test_portfolio.invest(100))
     
     def test_get_share(self):
         self.setup()

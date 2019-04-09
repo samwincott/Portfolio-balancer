@@ -1,10 +1,13 @@
 """This file holds the portfolio class."""
 
 import json
+import os
 from app.classes.share import Share
 
 class Portfolio(object):
     """This class will model a portfolio of shares."""
+
+    PRICE_DEVIATION = 1.05
 
     def __init__(self, shares=None):
         if shares is None:
@@ -24,9 +27,9 @@ class Portfolio(object):
         
         # Load in new data
         with open(filename, "r") as portfolio:
-            shares = json.load(portfolio)
-            for share in shares:
-                tmp = Share(share, shares[share])
+            file_contents = json.load(portfolio)
+            for share in file_contents["shares"]:
+                tmp = Share(share)
                 self.shares.append(tmp)
         
         self.update_meta_info()
@@ -94,22 +97,21 @@ class Portfolio(object):
         self.update_meta_info()
         shares_to_buy = {}
         # The price may deviate slightly between running this program and the order being executed
-        price_deviation = 1.05
 
-        while amount_to_invest >= min(share.price * price_deviation for share in self.shares):
+        while amount_to_invest >= min(share.price * self.PRICE_DEVIATION for share in self.shares):
             share_to_buy = min(self.percentage_diffs, key=self.percentage_diffs.get)
             self.buy_shares(share_to_buy.ticker, 1)
-            amount_to_invest -= share_to_buy.price * price_deviation
+            amount_to_invest -= share_to_buy.price * self.PRICE_DEVIATION
             try:
                 shares_to_buy[share_to_buy] += 1
             except:
                 shares_to_buy[share_to_buy] = 1
 
-        return_string = "Buy:\n"
+        advice = "Buy:\n"
         for share in shares_to_buy:
-            return_string += f'{shares_to_buy[share]} shares of {share.ticker} at {share.price*1.05*shares_to_buy[share]}\n'
+            advice += f'{shares_to_buy[share]} shares of {share.ticker} at {share.price*1.05*shares_to_buy[share]}\n'
 
-        return return_string
+        return advice
             
     # Updating info
 
