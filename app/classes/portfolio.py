@@ -107,15 +107,11 @@ class Portfolio(object):
             self.buy_shares(share_to_buy.ticker, 1)
             amount_to_invest -= share_to_buy.price * self.PRICE_DEVIATION
             try:
-                shares_to_buy[share_to_buy] += 1
+                shares_to_buy[share_to_buy.ticker] += 1
             except:
-                shares_to_buy[share_to_buy] = 1
+                shares_to_buy[share_to_buy.ticker] = 1
 
-        advice = "Buy:\n"
-        for share in shares_to_buy:
-            advice += f'{shares_to_buy[share]} shares of {share.ticker} at {share.price*1.05*shares_to_buy[share]}\n'
-
-        return advice
+        return shares_to_buy
 
     # Updating info
 

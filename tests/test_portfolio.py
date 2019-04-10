@@ -145,7 +145,10 @@ class TestPortfolio(unittest.TestCase):
     def test_invest(self):
         self.setup()
 
-        print(self.test_portfolio.invest(100))
+        advice = self.test_portfolio.invest(500)
+
+        self.assertEqual(advice["ABC"], 9, "Wrong number of shares to buy")
+        self.assertEqual(advice["XYZ"], 5, "Wrong number of shares to buy")
 
     def test_get_share(self):
         self.setup()
