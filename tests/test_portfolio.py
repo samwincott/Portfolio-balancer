@@ -91,7 +91,7 @@ class TestPortfolio(unittest.TestCase):
     def test_save(self):
         self.setup()
 
-        portfolio_path = os.path.abspath("data/test_save_portfolio.json")
+        portfolio_path = os.path.abspath("data/test_save_portfolio")
         self.test_portfolio.save(portfolio_path)
 
     def test_str(self):
