@@ -1,9 +1,9 @@
-# Lazy Allocator
+# Portfolio balancer
 
-Lazy Allocator is a Python program for allocating savings to a fixed portfolio.
+Portfolio balancer is a Python program for allocating savings to a fixed portfolio.
 For example saving £100 a month to a defined portfolio such as 60% equities and 40% bonds. If those are represented by multiple trackers, each of a different price, it may not be clear how to allocate the £100 a month to each fund; especially as the prices of each will fluctuate over time.
 
-This program scrapes pricing data from [Morningstar](morningstar.co.uk). An example is [Vanguard emerging markets](http://www.morningstar.co.uk/uk/funds/snapshot/snapshot.aspx?id=F000003VEA).
+This program scrapes pricing data from [Morningstar](morningstar.co.uk). An example is [Vanguard emerging markets](http://www.morningstar.co.uk/uk/funds/snapshot/snapshot.aspx?id=F000003VEA). Take the ID from the URL to construct the portfolio JSON file.
 
 ## Usage
 ```text
